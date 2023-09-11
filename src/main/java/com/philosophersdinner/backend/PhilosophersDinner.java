@@ -4,6 +4,8 @@
 
 package com.philosophersdinner.backend;
 
+import com.philosophersdinner.frontend.Dinner;
+
 /**
  *
  * @author Xavi
@@ -11,11 +13,8 @@ package com.philosophersdinner.backend;
 public class PhilosophersDinner {
 
     public static void main(String[] args) {
-        Table t = new Table(5);
-        
-        for (int i = 1; i <= 5; i++) {
-            Philosopher p = new Philosopher(t, i);
-            p.start();
-        }
+        Dinner dinner = new Dinner();
+        dinner.setVisible(true);
+        dinner.setLocationRelativeTo(null);
     }
 }
