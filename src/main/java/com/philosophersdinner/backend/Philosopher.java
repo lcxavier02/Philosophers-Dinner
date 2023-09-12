@@ -23,39 +23,53 @@ public class Philosopher extends Thread {
     private int indxPhilosopher;
     private static Map<Integer, String> philosopherNames;
     private JLabel philosopherLabel;
+    private JLabel[] forksLabels;
+    private boolean shouldStop = false;
 
     static {
         philosopherNames = new HashMap<>();
-        philosopherNames.put(1, "Aristotle");
-        philosopherNames.put(2, "Plato");
-        philosopherNames.put(3, "Socrates");
-        philosopherNames.put(4, "Confucius");
-        philosopherNames.put(5, "Kant");
+        philosopherNames.put(0, "Aristotle");
+        philosopherNames.put(1, "Plato");
+        philosopherNames.put(2, "Socrates");
+        philosopherNames.put(3, "Confucius");
+        philosopherNames.put(4, "Kant");
     }
     
-    public Philosopher (Table t, int philosopher, JLabel philosopherLabel) {
+    public Philosopher (Table t, int philosopher, JLabel philosopherLabel, JLabel[] forksLabels) {
         this.table = t;
         this.philosopher = philosopher;
         this.indxPhilosopher = philosopher - 1;
         this.philosopherLabel = philosopherLabel;
+        this.forksLabels = forksLabels;
+    }
+    
+    public void setShouldStop(boolean shouldStop) {
+        this.shouldStop = shouldStop;
     }
     
     public void run () {
-        while (true) {
+        while (!shouldStop && !Thread.currentThread().isInterrupted()) {
             this.thinking();
             this.table.takeForks(this.indxPhilosopher);
             this.eating();
-            System.out.println("Philosopher " + philosopherNames.get(this.philosopher) + " stops eating, forks free: " + (this.table.leftFork(this.indxPhilosopher) + 1) + ", " + (this.table.rightFork(this.indxPhilosopher) + 1));
+            System.out.println("Philosopher " + philosopherNames.get(this.philosopher) + " stops eating, forks free: " + (this.table.leftFork(this.indxPhilosopher)) + ", " + (this.table.rightFork(this.indxPhilosopher)));
+            forksLabels[this.table.leftFork(this.indxPhilosopher)].setVisible(true);
+            forksLabels[this.table.rightFork(this.indxPhilosopher)].setVisible(true);
             this.table.leaveForks(this.indxPhilosopher);
+            
+            if (Thread.currentThread().isInterrupted()) {
+                return;
+            }
         }
     }
     
     public void thinking () {
         System.out.println("Philosopher " + philosopherNames.get(philosopher) + " is thinking" );
         try {
-            ImageUtils.SetImageLabel(philosopherLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\thinking.gif");
+            ImageUtils.SetImageLabel(philosopherLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\batthink.gif");
             sleep((long) (Math.random() * 4000));
         } catch (InterruptedException ex) {
+            ImageUtils.SetImageLabel(philosopherLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\philosopher.png");
             Logger.getLogger(Philosopher.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -66,6 +80,7 @@ public class Philosopher extends Thread {
             ImageUtils.SetImageLabel(philosopherLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\eating.gif");
             sleep((long) (Math.random() * 7000));
         } catch (InterruptedException ex) {
+            ImageUtils.SetImageLabel(philosopherLabel, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\philosopher.png");
             Logger.getLogger(Philosopher.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

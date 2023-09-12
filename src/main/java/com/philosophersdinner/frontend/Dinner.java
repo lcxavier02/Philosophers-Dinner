@@ -8,6 +8,8 @@ import com.philosophersdinner.backend.Philosopher;
 import com.philosophersdinner.backend.Table;
 import com.philosophersdinner.backend.ImageUtils;
 import java.awt.Image;
+import java.util.List;
+import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -19,6 +21,8 @@ import javax.swing.JLabel;
 public class Dinner extends javax.swing.JFrame {
     
     private JLabel[] philosopherLabels = new JLabel[5];
+    private JLabel[] forksLabels = new JLabel[5];
+    private List<Philosopher> philosophers = new ArrayList<>();
 
     /**
      * Creates new form Diiner
@@ -39,11 +43,17 @@ public class Dinner extends javax.swing.JFrame {
         ImageUtils.SetImageLabel(Fk5, "C:\\Users\\Xavi\\Documents\\NetBeansProjects\\PhilosophersDinner\\src\\main\\java\\source\\forky.png");
         this.repaint();
         
-        philosopherLabels[0] = Ph1;
-        philosopherLabels[1] = Ph2;
-        philosopherLabels[2] = Ph3;
-        philosopherLabels[3] = Ph4;
-        philosopherLabels[4] = Ph5;
+        philosopherLabels[0] = Ph5;
+        philosopherLabels[1] = Ph1;
+        philosopherLabels[2] = Ph2;
+        philosopherLabels[3] = Ph3;
+        philosopherLabels[4] = Ph4;
+        
+        forksLabels[0] = Fk1;
+        forksLabels[1] = Fk2;
+        forksLabels[2] = Fk3;
+        forksLabels[3] = Fk4;
+        forksLabels[4] = Fk5;
     }
 
     /**
@@ -68,6 +78,7 @@ public class Dinner extends javax.swing.JFrame {
         Fk3 = new javax.swing.JLabel();
         Fk5 = new javax.swing.JLabel();
         Fk4 = new javax.swing.JLabel();
+        stopButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,6 +117,13 @@ public class Dinner extends javax.swing.JFrame {
 
         Fk4.setText("jLabel5");
 
+        stopButton.setText("Detener");
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -122,10 +140,11 @@ public class Dinner extends javax.swing.JFrame {
                         .addGap(39, 39, 39)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(Fk4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Ph4, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(startProgram)
-                                .addGap(76, 76, 76))
-                            .addComponent(Ph4, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(29, 29, 29)
+                                .addComponent(stopButton))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(108, 108, 108)
                         .addComponent(Fk5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -139,7 +158,7 @@ public class Dinner extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Fk3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(115, 115, 115)))
-                .addContainerGap(169, Short.MAX_VALUE))
+                .addContainerGap(144, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(211, 211, 211)
                 .addComponent(Ph5, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -155,7 +174,9 @@ public class Dinner extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(38, 38, 38)
-                        .addComponent(startProgram))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(startProgram)
+                            .addComponent(stopButton)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,14 +238,28 @@ public class Dinner extends javax.swing.JFrame {
 
     
     private void startProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startProgramActionPerformed
-        Table t = new Table(5);
+        Table t = new Table(5, forksLabels);
 
         for (int i = 1; i <= 5; i++) {
-            Philosopher p = new Philosopher(t, i, philosopherLabels[i - 1]);
+            Philosopher p = new Philosopher(t, i, philosopherLabels[i - 1], forksLabels);
+            philosophers.add(p);
             p.start();
         }
         
+        startProgram.setEnabled(false);
+        stopButton.setEnabled(true);
     }//GEN-LAST:event_startProgramActionPerformed
+
+    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        for (Philosopher philosopher : philosophers) {
+            philosopher.interrupt();
+            philosopher.setShouldStop(true);// Interrumpe el hilo del filósofo
+        }
+
+    // Desactivar el botón de detener
+        stopButton.setEnabled(false);
+        startProgram.setEnabled(true);
+    }//GEN-LAST:event_stopButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -240,6 +275,7 @@ public class Dinner extends javax.swing.JFrame {
     private javax.swing.JLabel Ph5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton startProgram;
+    private javax.swing.JButton stopButton;
     private javax.swing.JLabel table;
     // End of variables declaration//GEN-END:variables
 }

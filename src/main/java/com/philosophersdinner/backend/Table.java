@@ -6,6 +6,8 @@ package com.philosophersdinner.backend;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import com.philosophersdinner.backend.ImageUtils;
 
 /**
  *
@@ -14,9 +16,11 @@ import java.util.logging.Logger;
 public class Table {
     
     private boolean[] forks;
+    private JLabel[] forksLabels;
     
-    public Table (int numForks) {
+    public Table (int numForks, JLabel[] forksLabels) {
         this.forks = new boolean[numForks];
+        this.forksLabels = forksLabels;
     }
     
     public int leftFork (int i) {
@@ -36,12 +40,16 @@ public class Table {
             try {
                 wait();
             } catch (InterruptedException ex) {
+                forksLabels[leftFork(philosopher)].setVisible(true);
+                forksLabels[rightFork(philosopher)].setVisible(true);
                 Logger.getLogger(Table.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
         forks[leftFork(philosopher)] = true;
+        forksLabels[leftFork(philosopher)].setVisible(false);
         forks[rightFork(philosopher)] = true;
+        forksLabels[rightFork(philosopher)].setVisible(false);
     }
     
     public synchronized void leaveForks (int philosopher) {
